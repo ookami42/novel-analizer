@@ -103,3 +103,6 @@ PROCESSING_PLAN_FILENAME = Path(PASTA_SAIDA / "processing_plan.json")
 
 # Caminho para o template JSON de conhecimento
 KNOWLEDGE_TEMPLATE_PATH = Path(PASTA_SAIDA / "knowledge-template.json")
+
+# Caminho para valores de referencia
+KNOWLEDGE_SCALE_PATH = Path(PASTA_SAIDA / "knowledge-scale.json")
