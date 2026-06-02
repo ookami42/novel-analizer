@@ -61,16 +61,12 @@ PROMPT_CONSOLIDA_PATH = Path("prompts/chapter-consolidator.md")
 # Caminho para o arquivo de prompt do analisador
 PROMPT_ANALISE_PATH = Path("prompts/fragment-analizer.md")
 
-# Caminho para o template JSON de conhecimento
-KNOWLEDGE_TEMPLATE_PATH = Path("knowledge-template.json")
-
-
 
 # Marcadores do prompt de análise
 
 MARCADOR_REFERENCIAS = "=== 1. Campos de referência e TOC ==="
 MARCADOR_JSON_BASE = "=== 2. JSON base ==="
-PROMPT_MARCADOR_FRAGMENTO = "=== 3. Fragmento de historia ==="
+MARCADOR_FRAGMENTO = "=== 3. Fragmento de historia ==="
 
 # ---------------------------------------------------------------------------
 # Comportamento do pipeline
@@ -104,3 +100,6 @@ TOC_FILENAME_DEFAULT = Path(PASTA_SAIDA / "table_of_contents.json")
 
 # Nome padrão do arquivo de plano de processamento
 PROCESSING_PLAN_FILENAME = Path(PASTA_SAIDA / "processing_plan.json")
+
+# Caminho para o template JSON de conhecimento
+KNOWLEDGE_TEMPLATE_PATH = Path(PASTA_SAIDA / "knowledge-template.json")
