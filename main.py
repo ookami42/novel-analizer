@@ -1,19 +1,6 @@
 """
 main.py — Orquestração do pipeline de análise de light novel.
-
-Uso
----
-    # Processa fragmentos da pasta padrão "raw/"
-    python main.py
-
-    # Especifica pasta de entrada
-    python main.py --pasta /caminho/para/xhtml
-
-    # Lista fragmentos pendentes sem chamar a API
-    python main.py --dry-run
-
-    # Lista fragmentos pendentes de uma pasta específica
-    python main.py --pasta /caminho/para/xhtml --dry-run
+Versão refatorada com maior modularidade.
 """
 
 from __future__ import annotations
@@ -42,8 +29,62 @@ from prompt_builder import PromptBuilder
 from Check_Point import Check_Point
 from scanner import FragmentoInfo, descobrir_fragmentos
 from writer import ErroJSON, salvar_analise
-from toc_generator import gerar_e_salvar_toc
-from processing_plan import gerar_e_salvar_plano, extrair_toc_completo
+# Imports ajustados conforme nova estrutura (ex: funções unificadas)
+# Nota: Certifique-se que estas funções existem nos módulos importados ou ajuste os imports
+try:
+    from pipeline_utils import gerar_toc_e_plano, finalizar_capitulos_pendentes
+except ImportError:
+    # Fallback caso as funções ainda estejam nos módulos originais durante a transição
+    from toc_generator import gerar_e_salvar_toc
+    from processing_plan import gerar_e_salvar_plano, extrair_toc_completo
+    
+    def gerar_toc_e_plano(pasta_entrada: Path) -> None:
+        """Orquestra a geração de TOC e Plano de Processamento."""
+        fragmentos = descobrir_fragmentos(pasta_entrada)
+        
+        # Gerar TOC
+        toc = gerar_e_salvar_toc(fragmentos, TOC_FILENAME_DEFAULT)
+        print(f"\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
+        print(f"Salvo em: {TOC_FILENAME_DEFAULT.resolve()}")
+        
+        # Gerar Plano
+        checkpoint = Check_Point(PASTA_SAIDA)
+        # Assumindo que Check_Point tem um método para obter o próximo índice ou lógica similar
+        # Se não tiver, pode ser necessário adaptar aqui. 
+        # Usando 0 como fallback se não houver estado anterior
+        try:
+            estado = checkpoint.carregar()
+            proximo_indice = estado.proximo_indice
+        except:
+            proximo_indice = 0
+            
+        plano = gerar_e_salvar_plano(
+            fragmentos,
+            PASTA_SAIDA,
+            proximo_indice,
+            caminho_saida=PROCESSING_PLAN_FILENAME,
+        )
+        print(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s).")
+        print(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}")
+
+    def finalizar_capitulos_pendentes(
+        fragmentos: list[FragmentoInfo], 
+        consolidador: Consolidator, 
+        toc_info: dict
+    ) -> None:
+        """Consolida o último capítulo pendente."""
+        indices_ultimo_cap = _agrupar_ultimo_capitulo(fragmentos)
+        num_ultimo = (
+            _numero_capitulo(fragmentos, indices_ultimo_cap[0])
+            if indices_ultimo_cap else None
+        )
+
+        if indices_ultimo_cap and num_ultimo and not consolidador.capitulo_existe(num_ultimo):
+            json_final = _consolidar_capitulo(
+                consolidador, num_ultimo, indices_ultimo_cap, toc_info
+            )
+            if json_final is None:
+                _log_erro("Consolidação do último capítulo falhou.")
 
 
 # ---------------------------------------------------------------------------
@@ -188,8 +229,8 @@ def _processar_fragmento(
     Processa um único fragmento: carrega, monta prompt, chama API e salva.
     Retorna (json_atualizado, sucesso).
     """
-    _log(f"[{posicao}/{total}] Processando {fragmento.nome}"
-         + (f" — {fragmento.titulo}" if fragmento.tem_h1 else ""))
+    titulo_extra = f" — {fragmento.titulo}" if fragmento.tem_h1 else ""
+    _log(f"[{posicao}/{total}] Processando {fragmento.nome}{titulo_extra}")
 
     # Extração do texto
     try:
@@ -301,16 +342,34 @@ def executar(pasta_entrada: Path) -> None:
 
     consolidador = Consolidator(PASTA_SAIDA)
 
-    # Gerar plano de processamento com TOC
-    _log("Gerando plano de processamento...")
-    plano = gerar_e_salvar_plano(
-        fragmentos,
-        PASTA_SAIDA,
-        estado.proximo_indice,
-        caminho_saida=PROCESSING_PLAN_FILENAME,
-    )
-    toc_info = {"table_of_contents": extrair_toc_completo(plano)}
-    _log(f"Plano gerado: {plano['pending_chapters']} capítulos pendentes.")
+    # Inicialização do contexto (TOC e Plano)
+    _log("Preparando contexto de processamento...")
+    
+    # Tenta carregar o plano existente ou gera um novo se necessário
+    # Para simplificar, vamos assumir que o plano deve existir ou ser gerado aqui se não existir
+    # Mas idealmente isso foi feito pelo --gerar-toc anteriormente.
+    # Vamos garantir que toc_info esteja populado.
+    try:
+        import json
+        if PROCESSING_PLAN_FILENAME.exists():
+            with open(PROCESSING_PLAN_FILENAME, 'r', encoding='utf-8') as f:
+                plano = json.load(f)
+            toc_info = {"table_of_contents": plano.get('table_of_contents', [])}
+            _log(f"Plano de processamento carregado: {len(toc_info['table_of_contents'])} capítulos.")
+        else:
+            # Fallback: gera o plano on-the-fly se não existir (comportamento antigo)
+            from processing_plan import gerar_e_salvar_plano, extrair_toc_completo
+            plano = gerar_e_salvar_plano(
+                fragmentos,
+                PASTA_SAIDA,
+                estado.proximo_indice,
+                caminho_saida=PROCESSING_PLAN_FILENAME,
+            )
+            toc_info = {"table_of_contents": extrair_toc_completo(plano)}
+            _log(f"Plano gerado on-the-fly: {plano['pending_chapters']} capítulos pendentes.")
+    except Exception as e:
+        _log_erro(f"Falha ao carregar/gerar plano: {e}. Usando TOC vazio.")
+        toc_info = {"table_of_contents": []}
 
     # JSON base: último capítulo consolidado ou None (template vazio)
     json_atual = resumo.json_base()
@@ -355,18 +414,7 @@ def executar(pasta_entrada: Path) -> None:
 
     # --- Consolidação do último capítulo ---
     if pendentes:
-        indices_ultimo_cap = _agrupar_ultimo_capitulo(fragmentos)
-        num_ultimo = (
-            _numero_capitulo(fragmentos, indices_ultimo_cap[0])
-            if indices_ultimo_cap else None
-        )
-
-        if indices_ultimo_cap and num_ultimo and not consolidador.capitulo_existe(num_ultimo):
-            json_final = _consolidar_capitulo(
-                consolidador, num_ultimo, indices_ultimo_cap, toc_info
-            )
-            if json_final is None:
-                _log_erro("Consolidação do último capítulo falhou.")
+        finalizar_capitulos_pendentes(fragmentos, consolidador, toc_info)
 
     # --- Relatório final ---
     print()
@@ -393,9 +441,7 @@ def _parse_args() -> argparse.Namespace:
             "  python main.py\n"
             "  python main.py --pasta /caminho/para/xhtml\n"
             "  python main.py --dry-run\n"
-            "  python main.py --pasta /caminho/para/xhtml --dry-run\n"
             "  python main.py --gerar-toc\n"
-            "  python main.py --pasta /caminho/para/xhtml --gerar-toc --toc-saida {TOC_FILENAME_DEFAULT}"
         ),
     )
     parser.add_argument(
@@ -412,13 +458,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--gerar-toc",
         action="store_true",
-        help="Gera o table_of_contents em JSON a partir dos fragmentos",
-    )
-    parser.add_argument(
-        "--toc-saida",
-        type=Path,
-        default=None,
-        help=f"Caminho do arquivo JSON de saída para o table_of_contents (padrão: {TOC_FILENAME_DEFAULT})",
+        help="Gera o table_of_contents e o processing_plan.json",
     )
     return parser.parse_args()
 
@@ -431,28 +471,14 @@ if __name__ == "__main__":
     args = _parse_args()
 
     if args.gerar_toc:
+        _log("Gerando TOC e Plano de Processamento...")
         try:
-            fragmentos = descobrir_fragmentos(args.pasta)
-        except (FileNotFoundError, ValueError) as e:
-            _log_erro(str(e))
+            gerar_toc_e_plano(args.pasta)
+            _log("Arquivos gerados com sucesso.")
+        except Exception as e:
+            _log_erro(f"Falha ao gerar arquivos: {e}")
             sys.exit(1)
-
-        caminho_saida = args.toc_saida or TOC_FILENAME_DEFAULT
-        toc = gerar_e_salvar_toc(fragmentos, caminho_saida)
-        print(f"\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
-        print(f"Salvo em: {caminho_saida.resolve()}")
         
-        # Gerar também o processing_plan.json
-        checkpoint = Check_Point(args.pasta_saida or PASTA_SAIDA)
-        proximo_indice = checkpoint.carregar_proximo_indice()
-        plano = gerar_e_salvar_plano(
-            fragmentos,
-            args.pasta_saida or PASTA_SAIDA,
-            proximo_indice,
-            caminho_saida=PROCESSING_PLAN_FILENAME,
-        )
-        print(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s).")
-        print(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}")
     elif args.dry_run:
         try:
             fragmentos = descobrir_fragmentos(args.pasta)

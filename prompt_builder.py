@@ -56,16 +56,6 @@ def _carregar_knowledge_scale() -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Marcadores do fragment-analizer.md
-# ---------------------------------------------------------------------------
-
-# Os marcadores agora são importados do config.py para centralizar configurações
-# _MARCADOR_JSON_BASE = "=== 1. JSON base ==="
-# _MARCADOR_REFERENCIAS = "=== 1.1. Campos de referência e TOC ==="
-# _MARCADOR_FRAGMENTO = "=== 2. Fragmento de historia ==="
-
-
-# ---------------------------------------------------------------------------
 # Classe principal
 # ---------------------------------------------------------------------------
 
