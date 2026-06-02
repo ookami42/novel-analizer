@@ -191,7 +191,7 @@ ATENCIÓN: Los campos anteriores son sólo para consulta. NO los modifique en la
 
 ---
 
-=== 2. JSON Base ===
+=== 2. JSON base ===
 
 ```json
 {... el JSON base será inyectado aquí por PromptBuilder...}
