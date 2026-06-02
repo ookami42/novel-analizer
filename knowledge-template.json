@@ -1,0 +1,264 @@
+{
+  "volume_metadata": {
+    "table_of_contents": [
+      {
+        "cap_id": "CAP 01",
+        "title": "Prologue: オープニング",
+        "files": [
+          "text-000.xhtml"
+        ],
+        "narrative_position": 1
+      },
+      {
+        "cap_id": "CAP 02",
+        "title": "Chapter 1",
+        "files": [
+          "text-001.xhtml",
+          "text-002.xhtml",
+          "text-003.xhtml",
+          "text-004.xhtml"
+        ],
+        "narrative_position": 2
+      },
+      {
+        "cap_id": "CAP 03",
+        "title": "Chapter 2",
+        "files": [
+          "text-005.xhtml",
+          "text-006.xhtml",
+          "text-007.xhtml",
+          "text-008.xhtml",
+          "text-009.xhtml"
+        ],
+        "narrative_position": 3
+      },
+      {
+        "cap_id": "CAP 04",
+        "title": "Chapter 3",
+        "files": [
+          "text-010.xhtml",
+          "text-011.xhtml"
+        ],
+        "narrative_position": 4
+      },
+      {
+        "cap_id": "CAP 05",
+        "title": "Interlude 1",
+        "files": [
+          "text-012.xhtml"
+        ],
+        "narrative_position": 5
+      },
+      {
+        "cap_id": "CAP 06",
+        "title": "Chapter 4",
+        "files": [
+          "text-013.xhtml",
+          "text-014.xhtml"
+        ],
+        "narrative_position": 6
+      },
+      {
+        "cap_id": "CAP 07",
+        "title": "Chapter 5",
+        "files": [
+          "text-015.xhtml",
+          "text-016.xhtml",
+          "text-017.xhtml",
+          "text-018.xhtml"
+        ],
+        "narrative_position": 7
+      },
+      {
+        "cap_id": "CAP 08",
+        "title": "Interlude 2: 幕間 この思いに名前をつけるなら",
+        "files": [
+          "text-019.xhtml",
+          "text-020.xhtml",
+          "text-021.xhtml",
+          "text-022.xhtml"
+        ],
+        "narrative_position": 8
+      },
+      {
+        "cap_id": "CAP 09",
+        "title": "Chapter 6",
+        "files": [
+          "text-023.xhtml",
+          "text-024.xhtml",
+          "text-025.xhtml",
+          "text-026.xhtml"
+        ],
+        "narrative_position": 9
+      },
+      {
+        "cap_id": "CAP 10",
+        "title": "Chapter 7",
+        "files": [
+          "text-027.xhtml",
+          "text-028.xhtml"
+        ],
+        "narrative_position": 10
+      },
+      {
+        "cap_id": "CAP 11",
+        "title": "Epilogue: エンディング",
+        "files": [
+          "text-029.xhtml"
+        ],
+        "narrative_position": 11
+      }
+    ],
+    "title": "モブ少女がラスボス魔女を幸せにするまで",
+    "current_fragment": "fragment_00",
+    "current_chapter": 0,
+    "current_arc": "",
+    "translation_notes": []
+  },
+  "story_state": {
+    "current_arc": "",
+    "arc_summary": "",
+    "unresolved_tensions": [],
+    "pending_relationship_developments": [],
+    "recent_turning_points": []
+  },
+  "characters": {
+    "ロゼリカ": {
+      "translated_name": "Roselika",
+      "gender": "",
+      "description": "",
+      "speech_style": "",
+      "speech_profile": {
+        "first_person_pronouns": [],
+        "second_person_terms": [],
+        "common_expressions": [],
+        "sentence_endings": [],
+        "honorific_patterns": []
+      },
+      "personality": [],
+      "current_goals": [],
+      "notes": ""
+    }
+  },
+  "relationships": {
+    "_stage_reference": [
+      "desconhecidas",
+      "colegas",
+      "amigas",
+      "amigas_proximas",
+      "amizade_com_tensao_romantica",
+      "interesse_romantico_unilateral",
+      "interesse_romantico_mutuo_nao_assumido",
+      "quase_casal",
+      "casal"
+    ],
+    "<personagem_A>-<personagem_B>": {
+      "relationship_type": "",
+      "relationship_stage": "",
+      "trust_level": 0,
+      "closeness_level": 0,
+      "current_status": "",
+      "recent_changes": [],
+      "notes": ""
+    }
+  },
+  "romantic_subtext": {
+    "_scale_reference": {
+      "interest_level": {
+        "0": "nenhum interesse romântico",
+        "1-2": "curiosidade ou atenção ocasional",
+        "3-4": "afeição crescente",
+        "5-6": "forte apego emocional",
+        "7-8": "paixão evidente",
+        "9-10": "amor declarado ou praticamente confirmado"
+      },
+      "awareness_level": {
+        "0": "totalmente inconsciente",
+        "1-2": "sente algo diferente mas não entende",
+        "3-4": "suspeita de sentimentos especiais",
+        "5-6": "reconhece possível atração romântica",
+        "7-8": "admite internamente os sentimentos",
+        "9-10": "aceita completamente seus sentimentos"
+      },
+      "impact_level": {
+        "1": "detalhe pequeno",
+        "2": "mudança perceptível",
+        "3": "marco importante",
+        "4": "ponto de virada",
+        "5": "mudança decisiva no relacionamento"
+      }
+    },
+    "<personagem>": {
+      "<alvo>": {
+        "interest_level": 0,
+        "awareness_level": 0,
+        "key_indicators": [],
+        "latest_developments": [
+          {
+            "event": "",
+            "emotional_significance": "",
+            "impact_level": 1
+          }
+        ]
+      }
+    }
+  },
+  "emotional_progress": {
+    "<personagem>": {
+      "current_emotional_state": "",
+      "important_realizations": [],
+      "recent_changes": [],
+      "internal_conflicts": []
+    }
+  },
+  "speech_dynamics": {
+    "<personagem_A>-<personagem_B>": {
+      "formality_level": "",
+      "honorifics_used": [],
+      "nicknames_used": [],
+      "changes": []
+    }
+  },
+  "important_moments": [
+    {
+      "chapter": 0,
+      "type": "story|relationship|romance|character_growth",
+      "importance": "low|medium|high",
+      "description": "",
+      "consequences": []
+    }
+  ],
+  "chapter_history": [
+    {
+      "chapter": 0,
+      "summary": "",
+      "major_events": [],
+      "relationship_changes": [],
+      "romantic_progress": []
+    }
+  ],
+  "glossary": {
+    "<termo_japones>": {
+      "translation": "",
+      "description": ""
+    }
+  },
+  "locations": {
+    "<nome>": {
+      "translation": "",
+      "description": ""
+    }
+  },
+  "organizations": {
+    "<nome>": {
+      "translation": "",
+      "description": ""
+    }
+  },
+  "magic_terms": {
+    "<nome>": {
+      "translation": "",
+      "description": ""
+    }
+  }
+}

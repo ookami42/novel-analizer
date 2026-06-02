@@ -19,6 +19,7 @@ from pathlib import Path
 from api_client import chamar_qwen
 from config import PASTA_SAIDA, PREFIXO_CAPITULO, PROMPT_CONSOLIDA_PATH
 from writer import ErroJSON, ler_analise, _sanitizar
+from typing import Any
 
 
 # ---------------------------------------------------------------------------
@@ -87,6 +88,7 @@ class Consolidator:
         self,
         numero_capitulo: int,
         indices_fragmentos: list[int],
+        toc_info: dict[str, Any] | None = None,
     ) -> Path:
         """
         Lê os fragmentos do capítulo, chama o Qwen e salva o JSON consolidado.
@@ -97,6 +99,8 @@ class Consolidator:
             Número do capítulo — usado para nomear o arquivo capitulo-NNN.json.
         indices_fragmentos : list[int]
             Índices (0-based) dos analise-fragmento-NNN.md que compõem o capítulo.
+        toc_info : dict[str, Any] | None
+            Informações do table_of_contents para preencher cap_id e título.
 
         Retorna
         -------
@@ -115,7 +119,7 @@ class Consolidator:
             )
 
         jsons = self._coletar(indices_fragmentos)
-        mensagens = self._montar_mensagens(numero_capitulo, jsons)
+        mensagens = self._montar_mensagens(numero_capitulo, jsons, toc_info)
 
         try:
             resposta = chamar_qwen(mensagens)
@@ -167,6 +171,7 @@ class Consolidator:
         self,
         numero_capitulo: int,
         jsons: list[tuple[int, str, str]],
+        toc_info: dict[str, Any] | None = None,
     ) -> list[dict]:
         """Monta o payload [system, user] para a chamada de consolidação."""
         bloques = "\n\n".join(
@@ -178,9 +183,20 @@ class Consolidator:
             for i, (_, nome, conteudo) in enumerate(jsons)
         )
 
+        # Extrair informações do TOC se disponível
+        cap_id = f"CAP {numero_capitulo:02d}"
+        titulo_capitulo = f"Capítulo {numero_capitulo}"
+        
+        if toc_info is not None:
+            for cap in toc_info.get("table_of_contents", []):
+                if cap.get("cap_id") == cap_id:
+                    titulo_capitulo = cap.get("title", titulo_capitulo)
+                    break
+
         user = _INSTRUCCION_USUARIO.format(
+            cap_id=cap_id,
+            titulo_capitulo=titulo_capitulo,
             total=len(jsons),
-            numero_capitulo=numero_capitulo,
             bloques=bloques,
         )
 
