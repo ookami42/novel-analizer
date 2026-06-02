@@ -181,20 +181,20 @@ Devuelve exclusivamente el JSON actualizado (apenas o "JSON base" modificado).
 
 ---
 
-=== 1. JSON base ===
+=== 1. Base JSON ===
 
 ```json
-{ ... JSON base será injetado aqui pelo PromptBuilder ... }
+{... el JSON base será inyectado aquí por PromptBuilder...}
 ```
 
-=== 1.1. Campos de referência e TOC ===
+=== 1.1. Campos de referencia y TOC ===
 
 ```json
-{ ... Campos fixos de referência + table_of_contents serão injetados aqui ... }
+{...Aquí se inyectarán campos fijos de referencia + tabla_de_contenido... }
 ```
 
-NOTA: Os campos acima são apenas para consulta. NÃO os modifique na saída.
+NOTA: Los campos anteriores son sólo para consulta. NO los modifique en la salida.
 
-=== 2. Fragmento de historia ===
+=== 2. Fragmento de la historia ===
 
 
