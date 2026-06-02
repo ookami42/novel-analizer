@@ -1,59 +1,43 @@
-```
-# Compiled Python files
-*.pyc
+# My Custom Project
+ordered-fragments/
+table_of_contents.json
+processing_plan.json
+
+# Python
 __pycache__/
-
-# Virtual environments
-.venv/
-venv/
+*.pyc
+*.pyo
+*.pyd
+.Python
 env/
+venv/
+.venv/
+.ENV
+.env
 
-# Dependencies
-node_modules/
+# Build artifacts
+build/
+dist/
+*.egg-info/
 
 # Logs
 *.log
 
-# Temporary files
-*.tmp
-*.swp
-*.swo
-
-# Environment files
-.env
-.env.local
-*.env.*
-
-# Coverage reports
+# Coverage
 .coverage
 coverage/
 htmlcov/
 
-# IDE files
+# IDE
 .vscode/
 .idea/
-*.iml
+*.swp
+*.swo
 
-# OS generated files
+# OS
 .DS_Store
 Thumbs.db
-
-# Build outputs
-dist/
-build/
-target/
-*.out
-*.exe
-*.dll
-*.so
-*.a
-
-# Package management
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Testing
 .pytest_cache/
 .mypy_cache/
-```
