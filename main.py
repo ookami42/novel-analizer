@@ -25,7 +25,17 @@ from datetime import datetime
 from pathlib import Path
 
 from api_client import ErroAPI
-from config import PASTA_ENTRADA_PADRAO, PASTA_SAIDA, LOG_VERBOSO, PARAR_NO_ERRO
+from config import (
+    PASTA_ENTRADA_PADRAO,
+    PASTA_SAIDA,
+    LOG_VERBOSO,
+    PARAR_NO_ERRO,
+    DELAY_API_CHAMADA,
+    MAX_TENTATIVAS_RETRY,
+    ESPERA_RETRY,
+    TOC_FILENAME_DEFAULT,
+    PROCESSING_PLAN_FILENAME,
+)
 from Consolidator import Consolidator, ErroConsolidacao
 from loader import carregar_fragmento
 from prompt_builder import PromptBuilder
@@ -162,7 +172,7 @@ def executar(pasta_entrada: Path) -> None:
         fragmentos,
         PASTA_SAIDA,
         estado.proximo_indice,
-        caminho_saida=PASTA_SAIDA / "processing_plan.json",
+        caminho_saida=PASTA_SAIDA / PROCESSING_PLAN_FILENAME,
     )
     toc_info = {"table_of_contents": extrair_toc_completo(plano)}
     _log(f"Plano gerado: {plano['pending_chapters']} capítulos pendentes.")
@@ -242,7 +252,7 @@ def executar(pasta_entrada: Path) -> None:
 
         # --- Chamada à API ---
         _log('--- Chamada à API: Em 10 segundos ---')
-        time.sleep(10)
+        time.sleep(DELAY_API_CHAMADA)
         _log('Vai demorar MUITOS minutos!!! Aguarde...')
 
         inicio = time.monotonic()
@@ -328,28 +338,24 @@ def _agrupar_capitulo_mais_recente(fragmentos: list[FragmentoInfo]) -> list[int]
 # Retry simples para chamadas de API
 # ---------------------------------------------------------------------------
 
-_MAX_TENTATIVAS = 3
-_ESPERA_RETRY   = 10  # segundos
-
-
 def _chamar_com_retry(mensagens: list[dict]) -> str:
     """
-    Tenta chamar o Qwen até _MAX_TENTATIVAS vezes em caso de ErroAPI.
+    Tenta chamar o Qwen até MAX_TENTATIVAS_RETRY vezes em caso de ErroAPI.
     Levanta ErroAPI se todas as tentativas falharem.
     """
     from api_client import chamar_qwen, ErroConexao
 
     ultima_excecao: Exception | None = None
 
-    for tentativa in range(1, _MAX_TENTATIVAS + 1):
+    for tentativa in range(1, MAX_TENTATIVAS_RETRY + 1):
         try:
             return chamar_qwen(mensagens)
         except ErroConexao as e:
             ultima_excecao = e
-            if tentativa < _MAX_TENTATIVAS:
-                _log(f"  → Tentativa de acessar API {tentativa}/{_MAX_TENTATIVAS} falhou. "
-                     f"Aguardando {_ESPERA_RETRY}s...")
-                time.sleep(_ESPERA_RETRY)
+            if tentativa < MAX_TENTATIVAS_RETRY:
+                _log(f"  → Tentativa de acessar API {tentativa}/{MAX_TENTATIVAS_RETRY} falhou. "
+                     f"Aguardando {ESPERA_RETRY}s...")
+                time.sleep(ESPERA_RETRY)
         except ErroAPI:
             raise  # Erros não relacionados a conexão não fazem retry
 
@@ -371,7 +377,7 @@ def _parse_args() -> argparse.Namespace:
             "  python main.py --dry-run\n"
             "  python main.py --pasta /caminho/para/xhtml --dry-run\n"
             "  python main.py --gerar-toc\n"
-            "  python main.py --pasta /caminho/para/xhtml --gerar-toc --toc-saida table_of_contents.json"
+            "  python main.py --pasta /caminho/para/xhtml --gerar-toc --toc-saida {TOC_FILENAME_DEFAULT}"
         ),
     )
     parser.add_argument(
@@ -394,7 +400,7 @@ def _parse_args() -> argparse.Namespace:
         "--toc-saida",
         type=Path,
         default=None,
-        help="Caminho do arquivo JSON de saída para o table_of_contents (padrão: table_of_contents.json)",
+        help=f"Caminho do arquivo JSON de saída para o table_of_contents (padrão: {TOC_FILENAME_DEFAULT})",
     )
     return parser.parse_args()
 
@@ -413,7 +419,7 @@ if __name__ == "__main__":
             _log_erro(str(e))
             sys.exit(1)
 
-        caminho_saida = args.toc_saida or Path("table_of_contents.json")
+        caminho_saida = args.toc_saida or Path(TOC_FILENAME_DEFAULT)
         toc = gerar_e_salvar_toc(fragmentos, caminho_saida)
         print(f"\\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
         print(f"Salvo em: {caminho_saida.resolve()}")
