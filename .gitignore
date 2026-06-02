@@ -1,4 +1,6 @@
-```
+# My Custom Project
+ordered-fragments/
+
 # Python
 __pycache__/
 *.pyc
@@ -37,4 +39,3 @@ Thumbs.db
 # Testing
 .pytest_cache/
 .mypy_cache/
-```
