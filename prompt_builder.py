@@ -43,6 +43,18 @@ from config import (
 from knowledge_manager import KnowledgeManager
 
 
+def _carregar_knowledge_scale() -> dict[str, Any]:
+    """Carrega o knowledge-scale.json com as referências de estágios e escalas."""
+    if not KNOWLEDGE_SCALE_PATH.exists():
+        return {
+            "_relationships_reference": {"_stage_reference": {}},
+            "_romantic_subtext_reference": {"_scale_reference": {}}
+        }
+    
+    with open(KNOWLEDGE_SCALE_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 # ---------------------------------------------------------------------------
 # Marcadores do fragment-analizer.md
 # ---------------------------------------------------------------------------
@@ -133,7 +145,6 @@ class PromptBuilder:
         json_base_completo = self._knowledge_manager.obter_json_base(toc_data)
 
         # Mesclar json_atual se fornecido (sobrescreve campos do base)
-        # TODO: revisar a logica de mesclagem
         if json_atual is not None:
             if isinstance(json_atual, str):
                 json_atual_dict = json.loads(json_atual)
@@ -145,14 +156,13 @@ class PromptBuilder:
         else:
             json_injetado = json_base_completo
 
-        # Extrair apenas os campos de referência para exibição separada
-        referencias_fixas = self._knowledge_manager.referencias_fixas
-        
-        # Construir JSON de referências + TOC (apenas para consulta)
-        # TODO: Refatorar essa parte já que os campos de referencia foram movidos para knowledge-scale.json
+        # Carregar knowledge-scale.json para referências unificadas
+        knowledge_scale = _carregar_knowledge_scale()
+
+        # Construir JSON unificado de referências + TOC
         json_referencias_toc = {
-            "_stage_reference": referencias_fixas.get("_stage_reference", []),
-            "_scale_reference": referencias_fixas.get("_scale_reference", {}),
+            "_relationships_reference": knowledge_scale.get("_relationships_reference", {}),
+            "_romantic_subtext_reference": knowledge_scale.get("_romantic_subtext_reference", {}),
             "table_of_contents": json_base_completo["volume_metadata"]["table_of_contents"],
             "title": json_base_completo["volume_metadata"].get("title", "")
         }
@@ -161,10 +171,9 @@ class PromptBuilder:
         json_base_str = json.dumps(json_injetado, ensure_ascii=False, indent=2)
         json_referencias_str = json.dumps(json_referencias_toc, ensure_ascii=False, indent=2)
 
-        # Monta o conteúdo do usuário com DOIS separadores JSON
+        # Monta o conteúdo do usuário com JSON unificado de referências
         user = (
             f"{MARCADOR_REFERENCIAS}\n\n"
-            # TODO: criar uma unica string json formatada unindo "processing_plan.json" e "knowledge-scale.json"
             f"```json\n{json_referencias_str}\n```\n\n"
             f"{MARCADOR_JSON_BASE}\n\n"
             f"```json\n{json_base_str}\n```\n\n"
