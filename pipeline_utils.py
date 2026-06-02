@@ -8,19 +8,22 @@ de finalização para manter o main.py limpo e modular.
 from __future__ import annotations
 
 import json
+import sys
+from datetime import datetime
 from pathlib import Path
 
 from config import (
     PASTA_SAIDA,
     TOC_FILENAME_DEFAULT,
     PROCESSING_PLAN_FILENAME,
+    LOG_VERBOSO,
+    PARAR_NO_ERRO,
 )
 from scanner import FragmentoInfo, descobrir_fragmentos
 from Check_Point import Check_Point
 from toc_generator import gerar_e_salvar_toc
 from processing_plan import gerar_e_salvar_plano, extrair_toc_completo
 from Consolidator import Consolidator, ErroConsolidacao
-from main import _log, _log_erro, _agrupar_ultimo_capitulo, _numero_capitulo, _consolidar_capitulo
 
 
 def gerar_toc_e_plano(pasta_entrada: Path) -> None:
@@ -65,6 +68,85 @@ def gerar_toc_e_plano(pasta_entrada: Path) -> None:
     _log(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s) no total.")
     _log(f"Capítulos pendentes: {pending_count}")
     _log(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}")
+
+
+def _log(mensagem: str, verboso: bool = True) -> None:
+    """Loga mensagem com timestamp se verbose estiver habilitado."""
+    if verboso or LOG_VERBOSO:
+        ts = datetime.now().strftime("%H:%M:%S")
+        print(f"[{ts}] {mensagem}", flush=True)
+
+
+def _log_erro(mensagem: str) -> None:
+    """Loga mensagem de erro com timestamp em stderr."""
+    ts = datetime.now().strftime("%H:%M:%S")
+    print(f"[{ts}] ❌ {mensagem}", file=sys.stderr, flush=True)
+
+
+def _agrupar_ultimo_capitulo(fragmentos: list[FragmentoInfo]) -> list[int]:
+    """Retorna os índices do último capítulo (do último h1 até o fim)."""
+    ultimo_h1: int | None = None
+    for f in fragmentos:
+        if f.tem_h1:
+            ultimo_h1 = f.indice
+
+    if ultimo_h1 is None:
+        return []
+
+    return [f.indice for f in fragmentos if f.indice >= ultimo_h1]
+
+
+def _numero_capitulo(
+    fragmentos: list[FragmentoInfo],
+    indice_inicio: int,
+) -> int:
+    """
+    Retorna o número sequencial do capítulo que começa em indice_inicio.
+    Conta quantos h1 aparecem até esse índice (inclusive).
+    """
+    return sum(1 for f in fragmentos if f.tem_h1 and f.indice <= indice_inicio)
+
+
+def _consolidar_capitulo(
+    consolidador: Consolidator,
+    num_cap: int,
+    indices_cap: list[int],
+    toc_info: dict,
+) -> str | None:
+    """
+    Consolida um capítulo e retorna o JSON consolidado.
+    Retorna None se falhar.
+    """
+    if len(indices_cap) == 1:
+        # Capítulo de fragmento único
+        from writer import salvar_analise
+        path_analise = PASTA_SAIDA / f"analise-fragmento-{indices_cap[0]:03d}.md"
+        path_cap = consolidador.path_capitulo(num_cap)
+        path_cap.write_text(
+            path_analise.read_text(encoding="utf-8"), encoding="utf-8"
+        )
+        _log(f"  → Capítulo {num_cap:03d} tem 1 fragmento — "
+             f"copiado diretamente para {path_cap.name}")
+        return path_cap.read_text(encoding="utf-8")
+
+    # Múltiplos fragmentos
+    _log(f"  → Consolidando capítulo {num_cap:03d} "
+         f"({len(indices_cap)} fragmento(s))...")
+    try:
+        path_cap = consolidador.consolidar(
+            numero_capitulo=num_cap,
+            indices_fragmentos=indices_cap,
+            toc_info=toc_info,
+        )
+        _log(f"  → Capítulo {num_cap:03d} salvo em {path_cap.name}")
+        return path_cap.read_text(encoding="utf-8")
+    except ErroConsolidacao as e:
+        _log_erro(f"Consolidação do capítulo {num_cap:03d} falhou: {e}")
+        _log_erro(
+            "  → json_atual mantido do capítulo anterior — "
+            "contexto dos próximos fragmentos pode estar defasado."
+        )
+        return None
 
 
 def finalizar_capitulos_pendentes(

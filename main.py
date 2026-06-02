@@ -29,62 +29,7 @@ from prompt_builder import PromptBuilder
 from Check_Point import Check_Point
 from scanner import FragmentoInfo, descobrir_fragmentos
 from writer import ErroJSON, salvar_analise
-# Imports ajustados conforme nova estrutura (ex: funções unificadas)
-# Nota: Certifique-se que estas funções existem nos módulos importados ou ajuste os imports
-try:
-    from pipeline_utils import gerar_toc_e_plano, finalizar_capitulos_pendentes
-except ImportError:
-    # Fallback caso as funções ainda estejam nos módulos originais durante a transição
-    from toc_generator import gerar_e_salvar_toc
-    from processing_plan import gerar_e_salvar_plano, extrair_toc_completo
-    
-    def gerar_toc_e_plano(pasta_entrada: Path) -> None:
-        """Orquestra a geração de TOC e Plano de Processamento."""
-        fragmentos = descobrir_fragmentos(pasta_entrada)
-        
-        # Gerar TOC
-        toc = gerar_e_salvar_toc(fragmentos, TOC_FILENAME_DEFAULT)
-        print(f"\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
-        print(f"Salvo em: {TOC_FILENAME_DEFAULT.resolve()}")
-        
-        # Gerar Plano
-        checkpoint = Check_Point(PASTA_SAIDA)
-        # Assumindo que Check_Point tem um método para obter o próximo índice ou lógica similar
-        # Se não tiver, pode ser necessário adaptar aqui. 
-        # Usando 0 como fallback se não houver estado anterior
-        try:
-            estado = checkpoint.carregar()
-            proximo_indice = estado.proximo_indice
-        except:
-            proximo_indice = 0
-            
-        plano = gerar_e_salvar_plano(
-            fragmentos,
-            PASTA_SAIDA,
-            proximo_indice,
-            caminho_saida=PROCESSING_PLAN_FILENAME,
-        )
-        print(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s).")
-        print(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}")
-
-    def finalizar_capitulos_pendentes(
-        fragmentos: list[FragmentoInfo], 
-        consolidador: Consolidator, 
-        toc_info: dict
-    ) -> None:
-        """Consolida o último capítulo pendente."""
-        indices_ultimo_cap = _agrupar_ultimo_capitulo(fragmentos)
-        num_ultimo = (
-            _numero_capitulo(fragmentos, indices_ultimo_cap[0])
-            if indices_ultimo_cap else None
-        )
-
-        if indices_ultimo_cap and num_ultimo and not consolidador.capitulo_existe(num_ultimo):
-            json_final = _consolidar_capitulo(
-                consolidador, num_ultimo, indices_ultimo_cap, toc_info
-            )
-            if json_final is None:
-                _log_erro("Consolidação do último capítulo falhou.")
+from pipeline_utils import gerar_toc_e_plano, finalizar_capitulos_pendentes
 
 
 # ---------------------------------------------------------------------------
