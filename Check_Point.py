@@ -72,7 +72,7 @@ class Check_Point:
     """
 
     def __init__(self, pasta_saida: str | Path = PASTA_SAIDA) -> None:
-        self._pasta = Path(pasta_saida)
+        self._pasta = pasta_saida
         self._estado: EstadoPipeline | None = None
 
     # ------------------------------------------------------------------

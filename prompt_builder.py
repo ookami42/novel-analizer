@@ -36,7 +36,7 @@ from config import (
     KNOWLEDGE_TEMPLATE_PATH,
     MARCADOR_JSON_BASE,
     MARCADOR_REFERENCIAS,
-    PROMPT_MARCADOR_FRAGMENTO,
+    MARCADOR_FRAGMENTO,
     PASTA_SAIDA,
 )
 from knowledge_manager import KnowledgeManager
@@ -160,12 +160,12 @@ class PromptBuilder:
 
         # Monta o conteúdo do usuário com DOIS separadores JSON
         user = (
-            f"{MARCADOR_JSON_BASE}\n\n"
-            f"```json\n{json_base_str}\n```\n\n"
             f"{MARCADOR_REFERENCIAS}\n\n"
             f"```json\n{json_referencias_str}\n```\n\n"
-            f"NOTA: Os campos em '{MARCADOR_REFERENCIAS}' são apenas para consulta. NÃO os modifique na saída.\n\n"
-            f"{PROMPT_MARCADOR_FRAGMENTO}\n\n"
+            f"{MARCADOR_JSON_BASE}\n\n"
+            f"```json\n{json_base_str}\n```\n\n"
+            f"ATENCIÓN: Los campos en '{MARCADOR_REFERENCIAS}' son sólo para consulta. NO los modifique en la salida.\n\n"
+            f"{MARCADOR_FRAGMENTO}\n\n"
             f"{texto_fragmento}"
         )
 

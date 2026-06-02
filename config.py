@@ -64,12 +64,13 @@ PROMPT_ANALISE_PATH = Path("prompts/fragment-analizer.md")
 # Caminho para o template JSON de conhecimento
 KNOWLEDGE_TEMPLATE_PATH = Path("knowledge-template.json")
 
-# Marcador que separa o system prompt do bloco de fragmento no prompt-analise.md
-PROMPT_MARCADOR_FRAGMENTO = "=== 2. Fragmento de historia ==="
+
 
 # Marcadores do prompt de análise
-MARCADOR_JSON_BASE = "=== 1. JSON base ==="
-MARCADOR_REFERENCIAS = "=== 1.1. Campos de referência e TOC ==="
+
+MARCADOR_REFERENCIAS = "=== 1. Campos de referência e TOC ==="
+MARCADOR_JSON_BASE = "=== 2. JSON base ==="
+PROMPT_MARCADOR_FRAGMENTO = "=== 3. Fragmento de historia ==="
 
 # ---------------------------------------------------------------------------
 # Comportamento do pipeline
@@ -99,7 +100,7 @@ DELAY_API_CHAMADA = 10
 # ---------------------------------------------------------------------------
 
 # Nome padrão do arquivo TOC
-TOC_FILENAME_DEFAULT = PASTA_SAIDA / "table_of_contents.json"
+TOC_FILENAME_DEFAULT = Path(PASTA_SAIDA / "table_of_contents.json")
 
 # Nome padrão do arquivo de plano de processamento
-PROCESSING_PLAN_FILENAME = "processing_plan.json"
+PROCESSING_PLAN_FILENAME = Path(PASTA_SAIDA / "processing_plan.json")

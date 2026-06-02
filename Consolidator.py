@@ -224,7 +224,7 @@ class Consolidator:
 
 
     def _carregar_prompt(self):
-        path = Path(PROMPT_CONSOLIDA_PATH)
+        path = PROMPT_CONSOLIDA_PATH
 
         if not path.exists():
             raise FileNotFoundError(f"Arquivo não encontrado: {path.resolve()}")

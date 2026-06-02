@@ -44,8 +44,8 @@ class KnowledgeManager:
     """
 
     def __init__(self, template_path: str | Path = KNOWLEDGE_TEMPLATE_PATH, pasta_saida: str | Path = PASTA_SAIDA) -> None:
-        self._template_path = Path(template_path)
-        self._pasta_saida = Path(pasta_saida)
+        self._template_path = template_path
+        self._pasta_saida = pasta_saida
         self._template_original = self._carregar_template()
         self._referencias_fixas = self._extrair_referencias()
 

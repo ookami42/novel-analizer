@@ -172,7 +172,7 @@ def executar(pasta_entrada: Path) -> None:
         fragmentos,
         PASTA_SAIDA,
         estado.proximo_indice,
-        caminho_saida=PASTA_SAIDA / PROCESSING_PLAN_FILENAME,
+        caminho_saida=PROCESSING_PLAN_FILENAME,
     )
     toc_info = {"table_of_contents": extrair_toc_completo(plano)}
     _log(f"Plano gerado: {plano['pending_chapters']} capítulos pendentes.")
@@ -419,7 +419,7 @@ if __name__ == "__main__":
             _log_erro(str(e))
             sys.exit(1)
 
-        caminho_saida = args.toc_saida or Path(TOC_FILENAME_DEFAULT)
+        caminho_saida = args.toc_saida or TOC_FILENAME_DEFAULT
         toc = gerar_e_salvar_toc(fragmentos, caminho_saida)
         print(f"\\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
         print(f"Salvo em: {caminho_saida.resolve()}")
