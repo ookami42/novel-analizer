@@ -171,8 +171,8 @@ Mantén la coherencia con capítulos anteriores.
 
 # ENTRADA
 
-1. **Campos de referência + TOC**: Campos fixos de referência (_stage_reference, _scale_reference) combinados com o table_of_contents gerado dinamicamente. Estes campos NÃO devem ser editados.
-2. **JSON base**: Estado atual da obra (vazio no início, ou consolidado do capítulo anterior). Este é o único JSON que deve ser modificado e retornado.
+1. **Campos de referencia + TOC**: campos de referencia fijos (_stage_reference, _scale_reference) combinados con la tabla_de_contenido generada dinámicamente. Estos campos NO deben editarse.
+2. **JSON Base**: Estado actual del trabajo (vacío al inicio, o consolidado del capítulo anterior). Este es el único JSON que se debe modificar y devolver.
 3. **Fragmento de la novela ligera**.
 
 # SALIDA
@@ -181,20 +181,24 @@ Devuelve exclusivamente el JSON actualizado (apenas o "JSON base" modificado).
 
 ---
 
-=== 1. Base JSON ===
-
-```json
-{... el JSON base será inyectado aquí por PromptBuilder...}
-```
-
-=== 1.1. Campos de referencia y TOC ===
+=== 1. Campos de referencia y TOC ===
 
 ```json
 {...Aquí se inyectarán campos fijos de referencia + tabla_de_contenido... }
 ```
 
-NOTA: Los campos anteriores son sólo para consulta. NO los modifique en la salida.
+ATENCIÓN: Los campos anteriores son sólo para consulta. NO los modifique en la salida.
 
-=== 2. Fragmento de la historia ===
+---
+
+=== 2. JSON Base ===
+
+```json
+{... el JSON base será inyectado aquí por PromptBuilder...}
+```
+
+---
+
+=== 3. Fragmento de la historia ===
 
 
