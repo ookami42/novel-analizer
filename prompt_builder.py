@@ -150,11 +150,12 @@ class PromptBuilder:
         knowledge_scale = _carregar_knowledge_scale()
 
         # Construir JSON unificado de referências + TOC
+        volume_metadata = json_base_completo.get("volume_metadata", {})
         json_referencias_toc = {
             "_relationships_reference": knowledge_scale.get("_relationships_reference", {}),
             "_romantic_subtext_reference": knowledge_scale.get("_romantic_subtext_reference", {}),
-            "table_of_contents": json_base_completo["volume_metadata"]["table_of_contents"],
-            "title": json_base_completo["volume_metadata"].get("title", "")
+            "table_of_contents": volume_metadata.get("table_of_contents", []),
+            "title": volume_metadata.get("title", "")
         }
 
         # Converte os JSONs para string formatada
@@ -191,8 +192,7 @@ class PromptBuilder:
     # Internos
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _merge_json(base: dict, atual: dict) -> dict:
+    def _merge_json(self, base: dict, atual: dict) -> dict:
         """
         Faz merge profundo de dois dicionários.
         Campos de 'atual' sobrescrevem 'base'.
@@ -201,7 +201,7 @@ class PromptBuilder:
         
         for chave, valor in atual.items():
             if chave in resultado and isinstance(resultado[chave], dict) and isinstance(valor, dict):
-                resultado[chave] = PromptBuilder._merge_json(resultado[chave], valor)
+                resultado[chave] = self._merge_json(resultado[chave], valor)
             else:
                 resultado[chave] = valor
         
