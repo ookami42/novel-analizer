@@ -61,6 +61,9 @@ PROMPT_CONSOLIDA_PATH = Path("prompts/chapter-consolidator.md")
 # Caminho para o arquivo de prompt do analisador
 PROMPT_ANALISE_PATH = Path("prompts/fragment-analizer.md")
 
+# Caminho para o template JSON de conhecimento
+KNOWLEDGE_TEMPLATE_PATH = Path("knowledge-template.json")
+
 # Marcador que separa o system prompt do bloco de fragmento no prompt-analise.md
 PROMPT_MARCADOR_FRAGMENTO = "=== 2. Fragmento de historia ==="
 

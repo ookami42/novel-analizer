@@ -32,6 +32,8 @@ from prompt_builder import PromptBuilder
 from Check_Point import Check_Point
 from scanner import FragmentoInfo, descobrir_fragmentos, resumir
 from writer import ErroJSON, salvar_analise
+from toc_generator import gerar_e_salvar_toc
+from processing_plan import gerar_e_salvar_plano, extrair_toc_completo
 
 
 # ---------------------------------------------------------------------------
@@ -154,6 +156,17 @@ def executar(pasta_entrada: Path) -> None:
 
     consolidador = Consolidator(PASTA_SAIDA)
 
+    # Gerar plano de processamento com TOC
+    _log("Gerando plano de processamento...")
+    plano = gerar_e_salvar_plano(
+        fragmentos,
+        PASTA_SAIDA,
+        estado.proximo_indice,
+        caminho_saida=PASTA_SAIDA / "processing_plan.json",
+    )
+    toc_info = {"table_of_contents": extrair_toc_completo(plano)}
+    _log(f"Plano gerado: {plano['pending_chapters']} capítulos pendentes.")
+
     # JSON base: último capítulo consolidado ou None (template vazio)
     json_atual = resumo.json_base()
 
@@ -195,6 +208,7 @@ def executar(pasta_entrada: Path) -> None:
                             path_cap = consolidador.consolidar(
                                 numero_capitulo=num_cap,
                                 indices_fragmentos=indices_cap,
+                                toc_info=toc_info,
                             )
                             _log(f"  → Capítulo {num_cap:03d} salvo em {path_cap.name}")
                             json_atual = path_cap.read_text(encoding="utf-8")
@@ -280,6 +294,7 @@ def executar(pasta_entrada: Path) -> None:
                     path_cap = consolidador.consolidar(
                         numero_capitulo=num_ultimo,
                         indices_fragmentos=indices_ultimo_cap,
+                        toc_info=toc_info,
                     )
                     _log(f"Capítulo {num_ultimo:03d} salvo em {path_cap.name}")
                 except ErroConsolidacao as e:
@@ -354,7 +369,9 @@ def _parse_args() -> argparse.Namespace:
             "  python main.py\n"
             "  python main.py --pasta /caminho/para/xhtml\n"
             "  python main.py --dry-run\n"
-            "  python main.py --pasta /caminho/para/xhtml --dry-run"
+            "  python main.py --pasta /caminho/para/xhtml --dry-run\n"
+            "  python main.py --gerar-toc\n"
+            "  python main.py --pasta /caminho/para/xhtml --gerar-toc --toc-saida table_of_contents.json"
         ),
     )
     parser.add_argument(
@@ -368,6 +385,17 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Lista fragmentos pendentes sem chamar a API",
     )
+    parser.add_argument(
+        "--gerar-toc",
+        action="store_true",
+        help="Gera o table_of_contents em JSON a partir dos fragmentos",
+    )
+    parser.add_argument(
+        "--toc-saida",
+        type=Path,
+        default=None,
+        help="Caminho do arquivo JSON de saída para o table_of_contents (padrão: table_of_contents.json)",
+    )
     return parser.parse_args()
 
 
@@ -378,7 +406,18 @@ def _parse_args() -> argparse.Namespace:
 if __name__ == "__main__":
     args = _parse_args()
 
-    if args.dry_run:
+    if args.gerar_toc:
+        try:
+            fragmentos = descobrir_fragmentos(args.pasta)
+        except (FileNotFoundError, ValueError) as e:
+            _log_erro(str(e))
+            sys.exit(1)
+
+        caminho_saida = args.toc_saida or Path("table_of_contents.json")
+        toc = gerar_e_salvar_toc(fragmentos, caminho_saida)
+        print(f"\\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
+        print(f"Salvo em: {caminho_saida.resolve()}")
+    elif args.dry_run:
         try:
             fragmentos = descobrir_fragmentos(args.pasta)
         except (FileNotFoundError, ValueError) as e:
