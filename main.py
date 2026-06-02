@@ -477,7 +477,7 @@ if __name__ == "__main__":
             _log("Arquivos gerados com sucesso.")
         except Exception as e:
             _log_erro(f"Falha ao gerar arquivos: {e}")
-            sys.exit(1)
+            raise(e)
         
     elif args.dry_run:
         try:

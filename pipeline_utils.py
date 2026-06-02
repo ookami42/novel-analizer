@@ -40,8 +40,8 @@ def gerar_toc_e_plano(pasta_entrada: Path) -> None:
 
     # 2. Gerar TOC
     toc = gerar_e_salvar_toc(fragmentos, TOC_FILENAME_DEFAULT)
-    print(f"\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
-    print(f"Salvo em: {TOC_FILENAME_DEFAULT.resolve()}")
+    _log(f"\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
+    _log(f"Salvo em: {TOC_FILENAME_DEFAULT.resolve()}")
 
     # 3. Determinar estado atual (próximo índice)
     checkpoint = Check_Point(PASTA_SAIDA)
@@ -61,10 +61,10 @@ def gerar_toc_e_plano(pasta_entrada: Path) -> None:
     )
     
     # Extrair contagem de pendentes para log
-    pending_count = len(plano.get('pending_chapters', []))
-    print(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s) no total.")
-    print(f"Capítulos pendentes: {pending_count}")
-    print(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}")
+    pending_count = plano.get('pending_chapters', [])
+    _log(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s) no total.")
+    _log(f"Capítulos pendentes: {pending_count}")
+    _log(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}")
 
 
 def finalizar_capitulos_pendentes(
