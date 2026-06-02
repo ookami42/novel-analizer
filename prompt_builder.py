@@ -14,15 +14,15 @@ Responsabilidades:
 Estrutura esperada do fragment-analizer.md:
     <instruções do sistema>
     ---
-    === 1. JSON base ===
+    === 1. Campos de referência e TOC ===
     ```json
     { ... }
     ```
-    === 1.1. Campos de referência e TOC ===
+    === 2. JSON base ===
     ```json
     { ... }
     ```
-    === 2. Fragmento de historia ===
+    === 3. Fragmento de historia ===
 """
 
 from __future__ import annotations
@@ -34,6 +34,7 @@ from typing import Any
 from config import (
     PROMPT_ANALISE_PATH,
     KNOWLEDGE_TEMPLATE_PATH,
+    KNOWLEDGE_SCALE_PATH,
     MARCADOR_JSON_BASE,
     MARCADOR_REFERENCIAS,
     MARCADOR_FRAGMENTO,
@@ -132,6 +133,7 @@ class PromptBuilder:
         json_base_completo = self._knowledge_manager.obter_json_base(toc_data)
 
         # Mesclar json_atual se fornecido (sobrescreve campos do base)
+        # TODO: revisar a logica de mesclagem
         if json_atual is not None:
             if isinstance(json_atual, str):
                 json_atual_dict = json.loads(json_atual)
@@ -147,6 +149,7 @@ class PromptBuilder:
         referencias_fixas = self._knowledge_manager.referencias_fixas
         
         # Construir JSON de referências + TOC (apenas para consulta)
+        # TODO: Refatorar essa parte já que os campos de referencia foram movidos para knowledge-scale.json
         json_referencias_toc = {
             "_stage_reference": referencias_fixas.get("_stage_reference", []),
             "_scale_reference": referencias_fixas.get("_scale_reference", {}),
@@ -161,6 +164,7 @@ class PromptBuilder:
         # Monta o conteúdo do usuário com DOIS separadores JSON
         user = (
             f"{MARCADOR_REFERENCIAS}\n\n"
+            # TODO: criar uma unica string json formatada unindo "processing_plan.json" e "knowledge-scale.json"
             f"```json\n{json_referencias_str}\n```\n\n"
             f"{MARCADOR_JSON_BASE}\n\n"
             f"```json\n{json_base_str}\n```\n\n"
