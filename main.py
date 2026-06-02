@@ -439,8 +439,20 @@ if __name__ == "__main__":
 
         caminho_saida = args.toc_saida or TOC_FILENAME_DEFAULT
         toc = gerar_e_salvar_toc(fragmentos, caminho_saida)
-        print(f"\\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
+        print(f"\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
         print(f"Salvo em: {caminho_saida.resolve()}")
+        
+        # Gerar também o processing_plan.json
+        checkpoint = Check_Point(args.pasta_saida or PASTA_SAIDA)
+        proximo_indice = checkpoint.carregar_proximo_indice()
+        plano = gerar_e_salvar_plano(
+            fragmentos,
+            args.pasta_saida or PASTA_SAIDA,
+            proximo_indice,
+            caminho_saida=PROCESSING_PLAN_FILENAME,
+        )
+        print(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s).")
+        print(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}")
     elif args.dry_run:
         try:
             fragmentos = descobrir_fragmentos(args.pasta)
