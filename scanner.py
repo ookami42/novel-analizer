@@ -19,6 +19,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 
 from config import PADRAO_XHTML
+from logger import log
 
 
 # ---------------------------------------------------------------------------
@@ -126,9 +127,9 @@ def resumir(fragmentos: list[FragmentoInfo]) -> None:
     total = len(fragmentos)
     capitulos = [f for f in fragmentos if f.tem_h1]
 
-    print(f"Fragmentos encontrados : {total}")
-    print(f"Capítulos detectados   : {len(capitulos)}")
-    print()
+    log(f"Fragmentos encontrados : {total}", modulo="scanner")
+    log(f"Capítulos detectados   : {len(capitulos)}", modulo="scanner")
+    log("", modulo="scanner")
 
     capitulo_atual = 0
     for f in fragmentos:
@@ -137,4 +138,4 @@ def resumir(fragmentos: list[FragmentoInfo]) -> None:
             marcador = f"[CAP {capitulo_atual:02d}] {f.titulo or '(sem título)'}"
         else:
             marcador = "        (continuação)"
-        print(f"  {f.indice:03d}  {f.nome}  {marcador}")
+        log(f"  {f.indice:03d}  {f.nome}  {marcador}", modulo="scanner")

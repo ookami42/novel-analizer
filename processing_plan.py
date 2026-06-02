@@ -33,9 +33,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-from scanner import FragmentoInfo
 from Check_Point import Check_Point
 from Consolidator import Consolidator
+from scanner import FragmentoInfo
 
 
 def gerar_plano_processamento(

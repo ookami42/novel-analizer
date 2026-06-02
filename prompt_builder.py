@@ -32,13 +32,13 @@ from pathlib import Path
 from typing import Any
 
 from config import (
-    PROMPT_ANALISE_PATH,
-    KNOWLEDGE_TEMPLATE_PATH,
     KNOWLEDGE_SCALE_PATH,
+    KNOWLEDGE_TEMPLATE_PATH,
+    MARCADOR_FRAGMENTO,
     MARCADOR_JSON_BASE,
     MARCADOR_REFERENCIAS,
-    MARCADOR_FRAGMENTO,
     PASTA_SAIDA,
+    PROMPT_ANALISE_PATH,
 )
 from knowledge_manager import KnowledgeManager
 

@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from config import PADRAO_XHTML, PASTA_SAIDA, PREFIXO_ANALISE, PREFIXO_CAPITULO
+from logger import log
 
 
 # ---------------------------------------------------------------------------
@@ -68,7 +69,7 @@ class Check_Point:
     ---
         resumo = Creck_Point()
         estado = resumo.carregar()
-        print(resumo)  # exibe relatório legível
+        resumo.reportar()  # exibe relatório legível
     """
 
     def __init__(self, pasta_saida: str | Path = PASTA_SAIDA) -> None:
@@ -124,7 +125,7 @@ class Check_Point:
 
     def reportar(self) -> None:
         """Imprime um relatório legível do estado atual no stdout."""
-        print(str(self))
+        log(str(self), modulo="checkpoint")
 
     # ------------------------------------------------------------------
     # Internos

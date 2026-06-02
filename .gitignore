@@ -1,32 +1,30 @@
-# My Custom Project
-ordered-fragments/
-table_of_contents.json
-processing_plan.json
-
+```gitignore
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-env/
-venv/
-.venv/
-.ENV
-.env
-
-# Build artifacts
-build/
-dist/
-*.egg-info/
 
 # Logs
 *.log
 
-# Coverage
+# Environment
+.env
+.env.local
+*.env.*
+
+# Dependencies
+.venv/
+venv/
+pip-log.txt
+pipenv.lock
+
+# Testing
 .coverage
 coverage/
 htmlcov/
+.pytest_cache/
+.mypy_cache/
 
 # IDE
 .vscode/
@@ -37,7 +35,4 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
-
-# Testing
-.pytest_cache/
-.mypy_cache/
+```
