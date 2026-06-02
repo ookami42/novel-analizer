@@ -12,18 +12,19 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from Check_Point import Check_Point
+from Consolidator import Consolidator, ErroConsolidacao
 from config import (
-    PASTA_SAIDA,
-    TOC_FILENAME_DEFAULT,
-    PROCESSING_PLAN_FILENAME,
     LOG_VERBOSO,
     PARAR_NO_ERRO,
+    PASTA_SAIDA,
+    PROCESSING_PLAN_FILENAME,
+    TOC_FILENAME_DEFAULT,
 )
+from logger import log, log_erro
+from processing_plan import extrair_toc_completo, gerar_e_salvar_plano
 from scanner import FragmentoInfo, descobrir_fragmentos
-from Check_Point import Check_Point
 from toc_generator import gerar_e_salvar_toc
-from processing_plan import gerar_e_salvar_plano, extrair_toc_completo
-from Consolidator import Consolidator, ErroConsolidacao
 
 
 def gerar_toc_e_plano(pasta_entrada: Path) -> None:
@@ -43,8 +44,8 @@ def gerar_toc_e_plano(pasta_entrada: Path) -> None:
 
     # 2. Gerar TOC
     toc = gerar_e_salvar_toc(fragmentos, TOC_FILENAME_DEFAULT)
-    _log(f"\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).")
-    _log(f"Salvo em: {TOC_FILENAME_DEFAULT.resolve()}")
+    log(f"\nTable of Contents gerado com {len(toc['table_of_contents'])} capítulo(s).", modulo="pipeline_utils")
+    log(f"Salvo em: {TOC_FILENAME_DEFAULT.resolve()}", modulo="pipeline_utils")
 
     # 3. Determinar estado atual (próximo índice)
     checkpoint = Check_Point(PASTA_SAIDA)
@@ -64,23 +65,20 @@ def gerar_toc_e_plano(pasta_entrada: Path) -> None:
     )
     
     # Extrair contagem de pendentes para log
-    pending_count = plano.get('pending_chapters', [])
-    _log(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s) no total.")
-    _log(f"Capítulos pendentes: {pending_count}")
-    _log(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}")
+    pending_count = len(plano.get('pending_chapters', []))
+    log(f"Processing Plan gerado com {len(plano['table_of_contents'])} capítulo(s) no total.", modulo="pipeline_utils")
+    log(f"Capítulos pendentes: {pending_count}", modulo="pipeline_utils")
+    log(f"Salvo em: {PROCESSING_PLAN_FILENAME.resolve()}", modulo="pipeline_utils")
 
 
 def _log(mensagem: str, verboso: bool = True) -> None:
     """Loga mensagem com timestamp se verbose estiver habilitado."""
-    if verboso or LOG_VERBOSO:
-        ts = datetime.now().strftime("%H:%M:%S")
-        print(f"[{ts}] {mensagem}", flush=True)
+    log(mensagem, modulo="pipeline_utils", verboso=verboso)
 
 
 def _log_erro(mensagem: str) -> None:
     """Loga mensagem de erro com timestamp em stderr."""
-    ts = datetime.now().strftime("%H:%M:%S")
-    print(f"[{ts}] ❌ {mensagem}", file=sys.stderr, flush=True)
+    log_erro(mensagem, modulo="pipeline_utils")
 
 
 def _agrupar_ultimo_capitulo(fragmentos: list[FragmentoInfo]) -> list[int]:

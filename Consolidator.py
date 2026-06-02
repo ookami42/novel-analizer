@@ -18,8 +18,9 @@ from pathlib import Path
 
 from api_client import chamar_qwen
 from config import PASTA_SAIDA, PREFIXO_CAPITULO, PROMPT_CONSOLIDA_PATH
-from writer import ErroJSON, ler_analise, _sanitizar
+from logger import log, log_erro
 from typing import Any
+from writer import ErroJSON, _sanitizar, ler_analise
 
 
 # ---------------------------------------------------------------------------
