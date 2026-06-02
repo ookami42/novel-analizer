@@ -99,7 +99,7 @@ DELAY_API_CHAMADA = 10
 # ---------------------------------------------------------------------------
 
 # Nome padrão do arquivo TOC
-TOC_FILENAME_DEFAULT = "table_of_contents.json"
+TOC_FILENAME_DEFAULT = PASTA_SAIDA / "table_of_contents.json"
 
 # Nome padrão do arquivo de plano de processamento
 PROCESSING_PLAN_FILENAME = "processing_plan.json"
