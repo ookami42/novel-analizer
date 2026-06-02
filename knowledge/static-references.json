@@ -1,0 +1,42 @@
+{
+  "_relationships_reference": {
+    "_stage_reference": {
+      "0": "desconhecidas",
+      "1": "colegas",
+      "2": "amigas",
+      "3": "amigas_proximas",
+      "4": "amizade_com_tensao_romantica",
+      "5": "interesse_romantico_unilateral",
+      "6": "interesse_romantico_mutuo_nao_assumido",
+      "7": "quase_casal",
+      "8": "casal"
+    }
+  },
+  "_romantic_subtext_reference": {
+    "_scale_reference": {
+      "interest_level": {
+        "0": "nenhum interesse romântico",
+        "1": "curiosidade ou atenção ocasional",
+        "2": "afeição crescente",
+        "3": "forte apego emocional",
+        "4": "paixão evidente",
+        "5": "amor declarado ou praticamente confirmado"
+      },
+      "awareness_level": {
+        "0": "totalmente inconsciente",
+        "1": "sente algo diferente mas não entende",
+        "2": "suspeita de sentimentos especiais",
+        "3": "reconhece possível atração romântica",
+        "4": "admite internamente os sentimentos",
+        "5": "aceita completamente seus sentimentos"
+      },
+      "impact_level": {
+        "1": "detalhe pequeno",
+        "2": "mudança perceptível",
+        "3": "marco importante",
+        "4": "ponto de virada",
+        "5": "mudança decisiva no relacionamento"
+      }
+    }
+  }
+}
