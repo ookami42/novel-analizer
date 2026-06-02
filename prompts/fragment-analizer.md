@@ -35,7 +35,7 @@ Utiliza japonés para:
 * términos mágicos
 * honoríficos
 * apodos utilizados por los personajes
-* pares de relaciones (ej.: ロゼリカ-グレイス)
+* pares de relaciones (ej.: ロゼリカ - グレイス)
 * referencias de romantic_subtext
 
 Utiliza español para:
@@ -171,17 +171,30 @@ Mantén la coherencia con capítulos anteriores.
 
 # ENTRADA
 
-1. JSON base de la obra (para referencia de estructura).
-2. Fragmento de la novela ligera.
+1. **Campos de referência + TOC**: Campos fixos de referência (_stage_reference, _scale_reference) combinados com o table_of_contents gerado dinamicamente. Estes campos NÃO devem ser editados.
+2. **JSON base**: Estado atual da obra (vazio no início, ou consolidado do capítulo anterior). Este é o único JSON que deve ser modificado e retornado.
+3. **Fragmento de la novela ligera**.
 
 # SALIDA
 
-Devuelve exclusivamente el JSON actualizado.
+Devuelve exclusivamente el JSON actualizado (apenas o "JSON base" modificado).
 
 ---
 
-=== 1. JSON base ===
+=== 1. Base JSON ===
 
+```json
+{... el JSON base será inyectado aquí por PromptBuilder...}
+```
 
-=== 2. Fragmento de historia ===
+=== 1.1. Campos de referencia y TOC ===
+
+```json
+{...Aquí se inyectarán campos fijos de referencia + tabla_de_contenido... }
+```
+
+NOTA: Los campos anteriores son sólo para consulta. NO los modifique en la salida.
+
+=== 2. Fragmento de la historia ===
+
 

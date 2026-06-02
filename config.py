@@ -67,6 +67,10 @@ KNOWLEDGE_TEMPLATE_PATH = Path("knowledge-template.json")
 # Marcador que separa o system prompt do bloco de fragmento no prompt-analise.md
 PROMPT_MARCADOR_FRAGMENTO = "=== 2. Fragmento de historia ==="
 
+# Marcadores do prompt de análise
+MARCADOR_JSON_BASE = "=== 1. JSON base ==="
+MARCADOR_REFERENCIAS = "=== 1.1. Campos de referência e TOC ==="
+
 # ---------------------------------------------------------------------------
 # Comportamento do pipeline
 # ---------------------------------------------------------------------------
@@ -77,3 +81,25 @@ LOG_VERBOSO = True
 # Se True, interrompe o pipeline ao primeiro erro de API
 # Se False, loga o erro e continua para o próximo fragmento
 PARAR_NO_ERRO = False
+
+# Timeout para chamada de API em segundos
+QWEN_TIMEOUT = 600
+
+# Máximo de tentativas de retry para chamadas de API
+MAX_TENTATIVAS_RETRY = 3
+
+# Espera entre retries em segundos
+ESPERA_RETRY = 10
+
+# Delay antes de chamar a API (segundos) - útil para rate limiting
+DELAY_API_CHAMADA = 10
+
+# ---------------------------------------------------------------------------
+# Nomes de arquivos de saída
+# ---------------------------------------------------------------------------
+
+# Nome padrão do arquivo TOC
+TOC_FILENAME_DEFAULT = "table_of_contents.json"
+
+# Nome padrão do arquivo de plano de processamento
+PROCESSING_PLAN_FILENAME = "processing_plan.json"
